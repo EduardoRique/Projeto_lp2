@@ -1,73 +1,35 @@
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
-import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.JScrollBar;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileReader;
 
-public class FrameIndex {
+public class FrameIndex extends JFrame{
 
+	private static final long serialVersionUID = 1L;
 	private JFrame frame;
 	private JTextField txtNomeDoArquivo;
 	private JTextField txtCaminhoDoArquivo;
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					FrameIndex window = new FrameIndex();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
 	 * Create the application.
 	 */
-	public FrameIndex() {
-		initialize();
+	public FrameIndex(Indexacao indexacao, TreeTrie trie) {
+		initialize(indexacao, trie);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	private void initialize(Indexacao indexacao, TreeTrie trie) {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
-		JButton btnExcluirArquivo = new JButton("Excluir arquivo");
-		btnExcluirArquivo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnExcluirArquivo.setBounds(12, 173, 166, 25);
-		frame.getContentPane().add(btnExcluirArquivo);
-		
-		JButton btnAdicionarArquivo = new JButton("Adicionar arquivo");
-		btnAdicionarArquivo.setBounds(12, 136, 166, 25);
-		frame.getContentPane().add(btnAdicionarArquivo);
-		
-		JButton btnListarArquivos = new JButton("Listar arquivos");
-		btnListarArquivos.setBounds(12, 210, 166, 25);
-		frame.getContentPane().add(btnListarArquivos);
-		
-		JLabel lblIndexao = new JLabel("Indexação");
-		lblIndexao.setFont(new Font("Dialog", Font.BOLD, 24));
-		lblIndexao.setBounds(149, 27, 146, 34);
-		frame.getContentPane().add(lblIndexao);
 		
 		txtNomeDoArquivo = new JTextField();
 		txtNomeDoArquivo.setText("Nome do arquivo");
@@ -81,12 +43,62 @@ public class FrameIndex {
 		frame.getContentPane().add(txtCaminhoDoArquivo);
 		txtCaminhoDoArquivo.setColumns(10);
 		
+		JButton btnExcluirArquivo = new JButton("Excluir arquivo");
+		btnExcluirArquivo.setBounds(12, 167, 166, 25);
+		frame.getContentPane().add(btnExcluirArquivo);
+		
+		JButton btnAdicionarArquivo = new JButton("Adicionar arquivo");
+		btnAdicionarArquivo.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent e) {
+				String caminho = "";
+				String nome = "";
+				if(!txtNomeDoArquivo.getText().isEmpty()) {
+					nome = txtNomeDoArquivo.getText();
+				}
+				if(!txtCaminhoDoArquivo.getText().isEmpty()) {
+					caminho = txtCaminhoDoArquivo.getText();
+				}
+				
+				try {
+					FileReader file = new FileReader(caminho + nome);
+					Arquivo novoArquivo = new Arquivo(caminho, nome);
+					System.out.println("OPA");
+					indexacao.addArquivo(novoArquivo);
+					indexacao.importar(trie, novoArquivo);
+				}
+				catch(Exception E){
+					System.out.println("Arquivo não encontrado");
+				}
+			}
+		});
+		btnAdicionarArquivo.setBounds(12, 136, 166, 25);
+		frame.getContentPane().add(btnAdicionarArquivo);
+		
+		JButton btnListarArquivos = new JButton("Listar arquivos");
+		btnListarArquivos.setBounds(12, 236, 166, 25);
+		frame.getContentPane().add(btnListarArquivos);
+		
+		JLabel lblIndexao = new JLabel("Indexação");
+		lblIndexao.setFont(new Font("Dialog", Font.BOLD, 24));
+		lblIndexao.setBounds(159, 25, 146, 34);
+		frame.getContentPane().add(lblIndexao);
+		
 		JTextPane textPane = new JTextPane();
-		textPane.setBounds(201, 136, 206, 99);
+		textPane.setBounds(202, 150, 206, 99);
 		frame.getContentPane().add(textPane);
 		
-		JScrollBar scrollBar = new JScrollBar();
-		scrollBar.setBounds(390, 136, 17, 99);
-		frame.getContentPane().add(scrollBar);
+		JButton btnAtualizarArquivo = new JButton("Atualizar arquivo");
+		btnAtualizarArquivo.setBounds(12, 199, 166, 25);
+		frame.getContentPane().add(btnAtualizarArquivo);
+		
+		JButton btnVoltar = new JButton("Voltar");
+		btnVoltar.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+			}
+		});
+		btnVoltar.setBounds(0, 0, 117, 25);
+		frame.getContentPane().add(btnVoltar);
+		frame.setVisible(true);
 	}
 }

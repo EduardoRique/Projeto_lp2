@@ -1,47 +1,30 @@
-import java.awt.EventQueue;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
-import java.awt.Font;
-import java.awt.Color;
 
-public class FrameBusca {
+public class FrameBusca extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	private JFrame frame;
 	private JTextField txtDigiteASua;
 	private JButton btnBuscar_1;
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					FrameBusca window = new FrameBusca();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
 	 * Create the application.
 	 */
-	public FrameBusca() {
-		initialize();
+	public FrameBusca(TreeTrie trie) {
+		initialize(trie);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	private void initialize(TreeTrie trie) {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -54,8 +37,13 @@ public class FrameBusca {
 		txtDigiteASua.setColumns(10);
 		
 		JButton btnBuscar = new JButton("Buscar <OR>");
-		btnBuscar.addActionListener(new ActionListener() {
+		btnBuscar.addActionListener(new ActionListener() {			
 			public void actionPerformed(ActionEvent e) {
+				String strBusca = "";
+				if(!txtDigiteASua.getText().isEmpty()) {
+					strBusca = txtDigiteASua.getText();
+				}
+				trie.search(strBusca);
 			}
 		});
 		btnBuscar.setBounds(71, 147, 139, 25);
@@ -100,5 +88,16 @@ public class FrameBusca {
 		lblU_1.setForeground(Color.YELLOW);
 		lblU_1.setBounds(170, 52, 29, 30);
 		frame.getContentPane().add(lblU_1);
+		
+		JButton btnVoltar = new JButton("Voltar");
+		btnVoltar.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+			}
+		});
+		btnVoltar.setBounds(0, 0, 117, 25);
+		frame.getContentPane().add(btnVoltar);
+		
+		frame.setVisible(true);
 	}
 }
