@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -8,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class FrameBusca extends JFrame {
 
@@ -15,6 +19,7 @@ public class FrameBusca extends JFrame {
 	private JFrame frame;
 	private JTextField txtDigiteASua;
 	private JButton btnBuscar_1;
+	private TreeTrie blackList = new TreeTrie();
 
 	/**
 	 * Create the application.
@@ -42,6 +47,28 @@ public class FrameBusca extends JFrame {
 		frame.getContentPane().add(txtDigiteASua);
 		txtDigiteASua.setColumns(10);
 		
+		BufferedReader buffer = null;
+		String textoLinha;
+		Arquivo arquivo = new Arquivo("arquivos/", "blacklist.txt");
+		try {
+			buffer = new BufferedReader(new FileReader(arquivo.getCaminho() + arquivo.getNome()));
+			int linha = 1;
+			arquivo.setQntdPalavras(0);
+            while ((textoLinha = buffer.readLine()) != null) {
+            	//textoLinha = trataString(textoLinha);
+                String[] arr = textoLinha.split(" ");
+                for(String ss : arr) {
+                	if(!ss.trim().equals(""))
+                		blackList.insertWord(ss, linha, arquivo);
+                	  	arquivo.increaseQntdPalavras();
+                 }
+                linha++;
+            }
+            buffer.close();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+		
 		JButton btnBuscar = new JButton("Buscar <OR>");
 		btnBuscar.addActionListener(new ActionListener() {			
 			public void actionPerformed(ActionEvent e) {
@@ -57,11 +84,16 @@ public class FrameBusca extends JFrame {
 						if(i == strBusca.length() - 1) {
 							strAux += Character.toString(c);
 						}
-						TrieNode t = trie.searchNode(strAux);
-				        if(t != null && t.isLeaf) {
-				        	for(Infos info : t.getInfos()) {
-				        		list.add(info.getArquivo() + ": " + info.getQntd() + " ocorrência(s)​ ​ da​ ​ palavra " + strAux + " na linha: " + info.getLinha());
-				        	}
+						if(blackList.search(strAux)) {
+			        		JOptionPane.showMessageDialog(btnBuscar, "Palavra " + strAux + " proibida");
+			        	}
+						else {
+							TrieNode t = trie.searchNode(strAux);
+					        if(t != null && t.isLeaf) {
+				        		for(Infos info : t.getInfos()) {
+				        			list.add(info.getArquivo() + ": " + info.getQntd() + " ocorrência(s)​ ​ da​ ​ palavra " + strAux + " na linha: " + info.getLinha());
+				        		}
+					        }
 				        }
 					strAux = "";
 					}
@@ -91,10 +123,14 @@ public class FrameBusca extends JFrame {
 						if(i == strBusca.length() - 1) {
 							strAux += Character.toString(c);
 						}
-						TrieNode t = trie.searchNode(strAux);
-				        if(t != null && t.isLeaf) {
-				        	vetorEncontradas.add(t.getInfos());
-				        }
+						if(blackList.search(strAux)) {
+			        		JOptionPane.showMessageDialog(btnBuscar_1, "Palavra " + strAux + " proibida");
+			        	}else {
+							TrieNode t = trie.searchNode(strAux);
+					        if(t != null && t.isLeaf) {
+					        	vetorEncontradas.add(t.getInfos());
+					        }
+			        	}
 					strAux = "";
 					}
 					else {
@@ -116,13 +152,15 @@ public class FrameBusca extends JFrame {
 						if(i == strBusca.length() - 1) {
 							strAux += Character.toString(c);
 						}
-						TrieNode t = trie.searchNode(strAux);
+		        		TrieNode t = trie.searchNode(strAux);
 				        if(t != null && t.isLeaf) {
 				        	for(Infos info : t.getInfos()) {
-				        		if(encontradas.contains(info.getArquivo()))
-				        				list.add(info.getArquivo() + ": " + info.getQntd() + " ocorrência(s)​ ​ da​ ​ palavra " + strAux + " na linha: " + info.getLinha());
-				        	}
+				        		if(encontradas.contains(info.getArquivo())) {	
+				        			list.add(info.getArquivo() + ": " + info.getQntd() + " ocorrência(s)​ ​ da​ ​ palavra " + strAux + " na linha: " + info.getLinha());
+				        		}
+				        	}	
 				        }
+			        	
 					strAux = "";
 					}
 					else {

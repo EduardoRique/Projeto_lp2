@@ -97,28 +97,6 @@ public class Indexacao {
 		return true;
 	}
 	
-	public boolean limpar(TreeTrie trie, Arquivo arquivo) {
-		BufferedReader buffer = null;
-		String textoLinha;
-		try {
-			buffer = new BufferedReader(new FileReader(arquivo.getCaminho() + arquivo.getNome()));
-			int linha = 1;
-            while ((textoLinha = buffer.readLine()) != null) {
-                String[] arr = textoLinha.split(" ");
-                for(String ss : arr) {
-                	if(!ss.trim().equals("")) {
-                		trie.removeWord(ss);
-                	}	
-                 }
-                linha++;
-            }
-
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
-		return true;
-	}
-	
 	private static String trataString(String texto) {
 		texto = Normalizer.normalize(texto, Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 		for(int i = 0; i < caracteresInvalidos.length; i++)

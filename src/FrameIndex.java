@@ -6,7 +6,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileReader;
-import javax.swing.JList;
 
 public class FrameIndex extends JFrame{
 
