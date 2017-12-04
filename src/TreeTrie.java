@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map.Entry;
 //import java.util.Scanner;
 
@@ -75,6 +76,17 @@ public class TreeTrie {
             }
     	}
     }
+    
+    public boolean removeArquivo(String nomeArquivo) {
+		Iterator<TrieNode> i = root.getChildren().values().iterator();
+		while (i.hasNext()) {
+			TrieNode filho = i.next();
+			filho.removeArquivo(nomeArquivo);
+			if((filho.getInfos().size() == 0) && (filho.getChildren().size() == 0))
+				i.remove();
+		}
+		return true;
+}
     
     /**
   * Returns if there is any word in the trie that starts with the given prefix.

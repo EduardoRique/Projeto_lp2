@@ -8,6 +8,13 @@
  */
 public class Arquivo {
 
+	/**
+	 * @param qntdPalavras the qntdPalavras to set
+	 */
+	public void setQntdPalavras(int qntdPalavras) {
+		this.qntdPalavras = qntdPalavras;
+	}
+
 	private String caminho;
 	private String nome;
 	private int qntdPalavras;

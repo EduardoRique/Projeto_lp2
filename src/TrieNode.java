@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 // TODO: Auto-generated Javadoc
@@ -122,6 +124,26 @@ public class TrieNode {
 	public ArrayList<Infos> getInfos() {
 		return infos;
 	}
+	
+	public boolean maisDeUmArquivo(String nomeArquivo) {
+		HashSet<String> arquivos = new HashSet<String>();
+		for(Infos info : infos) {
+			arquivos.add(info.getArquivo());
+		}
+		if(arquivos.size() > 1) {
+			removeInfos(nomeArquivo);
+			return true;
+		}
+		return false;
+	}
+	
+	public void removeInfos(String nomeArquivo) {
+		for(Infos info : infos) {
+			if(info.getArquivo() == nomeArquivo) {
+				infos.remove(info);
+			}
+		}
+	}
 
 
 	/**
@@ -145,5 +167,34 @@ public class TrieNode {
 		}
 	}
 	
+	public void removeArquivo(String nomeArquivo) {
+		Iterator<TrieNode> i = this.getChildren().values().iterator();
+		while (i.hasNext()) {
+			TrieNode children = i.next();
+			children.removeArquivo(nomeArquivo);
+			if((children.getInfos().size() == 0) && (children.getChildren().size() == 0)) {
+				i.remove();
+			}
+		}
+		if(this.isLeaf()) {
+			Iterator<Infos> ii = this.getInfos().iterator();
+			while (ii.hasNext()) {
+				Infos info = ii.next();
+				if(info.getArquivo().equals(nomeArquivo)) {
+					ii.remove();
+				}
+			}
+			if(this.getInfos().size() == 0) {
+				this.setLeaf(false);
+			}
+		}
+	}
+	public int qntdArquivo() {
+		HashSet<String> qntdArquivos = new HashSet<String>();
+		for(Infos nomeArq : infos) {
+			qntdArquivos.add(nomeArq.getArquivo());
+		}
+		return qntdArquivos.size();
+	}
 
 }

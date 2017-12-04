@@ -33,10 +33,12 @@ public class ControlSystem {
 		while(vdd) {
 			if(system.isIndexacao()) {
 				FrameIndex windowIndex = new FrameIndex(index, trie);
+				windowIndex.getBounds();
 				system.setIndexacao(false);
 			}
 			else if(system.isBusca()) {
 				FrameBusca windowBusca = new FrameBusca(trie);
+				windowBusca.getBounds();
 				system.setBusca(false);
 			}
 			else {

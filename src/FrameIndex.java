@@ -2,11 +2,11 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileReader;
+import javax.swing.JList;
 
 public class FrameIndex extends JFrame{
 
@@ -31,6 +31,10 @@ public class FrameIndex extends JFrame{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
+		List list = new List();
+		list.setBounds(195, 137, 243, 126);
+		frame.getContentPane().add(list);
+		
 		txtNomeDoArquivo = new JTextField();
 		txtNomeDoArquivo.setText("Nome do arquivo");
 		txtNomeDoArquivo.setBounds(12, 105, 114, 19);
@@ -44,6 +48,31 @@ public class FrameIndex extends JFrame{
 		txtCaminhoDoArquivo.setColumns(10);
 		
 		JButton btnExcluirArquivo = new JButton("Excluir arquivo");
+		btnExcluirArquivo.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent e) {
+				String caminho = "";
+				String nome = "";
+				if(!txtNomeDoArquivo.getText().isEmpty()) {
+					nome = txtNomeDoArquivo.getText();
+				}
+				if(!txtCaminhoDoArquivo.getText().isEmpty()) {
+					caminho = txtCaminhoDoArquivo.getText();
+				}
+				
+				try {
+					FileReader file = new FileReader(caminho + nome);
+					Arquivo novoArquivo = new Arquivo(caminho, nome);
+					trie.removeArquivo(novoArquivo.getNome());
+					//System.out.println("OPA");
+					indexacao.delArquivo(novoArquivo);
+					//indexacao.limpar(trie, novoArquivo);
+					
+				}
+				catch(Exception E){
+					System.out.println("Arquivo não encontrado");
+				}
+			}
+		});
 		btnExcluirArquivo.setBounds(12, 167, 166, 25);
 		frame.getContentPane().add(btnExcluirArquivo);
 		
@@ -62,7 +91,6 @@ public class FrameIndex extends JFrame{
 				try {
 					FileReader file = new FileReader(caminho + nome);
 					Arquivo novoArquivo = new Arquivo(caminho, nome);
-					System.out.println("OPA");
 					indexacao.addArquivo(novoArquivo);
 					indexacao.importar(trie, novoArquivo);
 				}
@@ -75,6 +103,14 @@ public class FrameIndex extends JFrame{
 		frame.getContentPane().add(btnAdicionarArquivo);
 		
 		JButton btnListarArquivos = new JButton("Listar arquivos");
+		btnListarArquivos.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent e) {
+				list.removeAll();
+		        for(Arquivo arquivo : indexacao.getArquivos()) {
+		        		list.add("Arquivo '" + arquivo.getNome() + "' no caminho '" + arquivo.getCaminho() + "' possui " + arquivo.getQntdPalavras() + " palavras ");
+		        }
+			}
+		});
 		btnListarArquivos.setBounds(12, 236, 166, 25);
 		frame.getContentPane().add(btnListarArquivos);
 		
@@ -83,11 +119,22 @@ public class FrameIndex extends JFrame{
 		lblIndexao.setBounds(159, 25, 146, 34);
 		frame.getContentPane().add(lblIndexao);
 		
-		JTextPane textPane = new JTextPane();
-		textPane.setBounds(202, 150, 206, 99);
-		frame.getContentPane().add(textPane);
-		
 		JButton btnAtualizarArquivo = new JButton("Atualizar arquivo");
+		btnAtualizarArquivo.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent e) {
+				try {
+					for(Arquivo novoArquivo : indexacao.getArquivos()) {
+					trie.removeArquivo(novoArquivo.getNome());
+					indexacao.delArquivo(novoArquivo);
+					indexacao.addArquivo(novoArquivo);
+					indexacao.importar(trie, novoArquivo);
+					}
+				}
+				catch(Exception E){
+					System.out.println("Arquivo não encontrado");
+				}
+			}
+		});
 		btnAtualizarArquivo.setBounds(12, 199, 166, 25);
 		frame.getContentPane().add(btnAtualizarArquivo);
 		
@@ -99,6 +146,7 @@ public class FrameIndex extends JFrame{
 		});
 		btnVoltar.setBounds(0, 0, 117, 25);
 		frame.getContentPane().add(btnVoltar);
+
 		frame.setVisible(true);
 	}
 }

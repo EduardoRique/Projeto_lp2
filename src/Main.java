@@ -70,7 +70,7 @@ public class Main {
 			case 3:
 				System.out.println("Digite a string a remover");
 				try {
-					t.removeWord(scan.next());
+					//t.removeWord(scan.next());
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
